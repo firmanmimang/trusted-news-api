@@ -19,9 +19,12 @@ type Config struct {
 var ENV *Config
 
 func LoadConfig() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
+	// Load .env only in local environment
+	if os.Getenv("RAILWAY_ENVIRONMENT") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Println("Warning: No .env file found, relying on system environment variables")
+		}
 	}
 
 	ENV = &Config{
