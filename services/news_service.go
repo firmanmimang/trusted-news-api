@@ -19,11 +19,11 @@ func NewNewsService(db *gorm.DB) *NewsService {
 
 func (s *NewsService) GetNews(limit, offset int, categorySlug *string) ([]models.News, error) {
 	var news []models.News
-	query := s.DB.Session(&gorm.Session{NewDB: true}).Preload("Category").Order("created_at DESC")
+	query := s.DB.Preload("Category").Order("created_at DESC")
 
 	if categorySlug != nil {
 		var category models.Category
-		result := s.DB.Session(&gorm.Session{NewDB: true}).Where("slug = ?", *categorySlug).First(&category)
+		result := s.DB.Where("slug = ?", *categorySlug).First(&category)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("category not found")
 		}
